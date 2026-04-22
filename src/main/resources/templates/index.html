@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Entralia - Eventos</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+
+    <style>
+
+        /* FONDO GENERAL (oscuro suave, no negro) */
+        body {
+            background: #1A1A1A;
+            color: #F2F2F2;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* HERO */
+        .hero {
+            height: 60vh;
+            background: url('/img/hero-eventos.jpg') center/cover no-repeat;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .hero::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.45);
+        }
+
+        .hero-content {
+            position: relative;
+            text-align: center;
+            z-index: 2;
+        }
+
+        .hero-title {
+            font-size: 3rem;
+            font-weight: 800;
+            color: #C8A2FF; 
+            text-shadow: 0 0 10px rgba(200,162,255,0.4);
+        }
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+            margin-top: 10px;
+            color: #EDEDED;
+        }
+
+        .btn-hero {
+            background: #9EEBC7; 
+            color: #1A1A1A;
+            font-weight: 700;
+            padding: 12px 28px;
+            border-radius: 10px;
+            margin-top: 25px;
+            border: none;
+            font-size: 1.1rem;
+        }
+
+        .btn-hero:hover {
+            background: #8adbb5;
+        }
+
+        /* SECCIÓN EVENTOS */
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            color: #C8A2FF;
+            border-left: 6px solid #C8A2FF;
+            padding-left: 12px;
+        }
+
+        /* TARJETAS */
+        .event-card {
+            background: #2A2A2A; 
+            border-radius: 12px;
+            overflow: hidden;
+            transition: 0.25s;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .event-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 0 18px rgba(200,162,255,0.25); 
+        }
+
+        .event-img {
+            width: 100%;
+            height: 260px;
+            object-fit: cover;
+        }
+
+        .event-info {
+            padding: 15px;
+        }
+
+        .event-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #FFFFFF;
+        }
+
+        .event-date {
+            font-size: 0.9rem;
+            color: #CCCCCC;
+        }
+
+        .event-location {
+            font-size: 0.9rem;
+            color: #9EEBC7;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<th:block th:replace="fragments/header :: header"></th:block>
+
+<!-- CARRUSEL DINÁMICO -->
+<div id="eventosCarousel"
+     class="carousel slide"
+     data-bs-ride="carousel"
+     data-bs-interval="3000">
+
+    <!-- Indicadores -->
+    <div class="carousel-indicators" th:if="${#lists.size(carruselEventos) > 0}">
+        <button th:each="e, i : ${carruselEventos}"
+                type="button"
+                data-bs-target="#eventosCarousel"
+                th:data-bs-slide-to="${i.index}"
+                th:classappend="${i.index == 0} ? 'active'">
+        </button>
+    </div>
+
+    <!-- Imágenes -->
+    <div class="carousel-inner rounded shadow-lg">
+
+        <div class="carousel-item"
+             th:each="e, i : ${carruselEventos}"
+             th:classappend="${i.index == 0} ? ' active'">
+
+            <img th:src="@{'/img/eventos/' + ${e.imagen}}"
+                 class="d-block w-100"
+                 style="height: 450px; object-fit: cover;"
+                 th:alt="${e.nombre}">
+        </div>
+
+    </div>
+
+    <!-- Flechas -->
+    <button class="carousel-control-prev" type="button" data-bs-target="#eventosCarousel" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon"></span>
+        <span class="visually-hidden">Anterior</span>
+    </button>
+
+    <button class="carousel-control-next" type="button" data-bs-target="#eventosCarousel" data-bs-slide="next">
+        <span class="carousel-control-next-icon"></span>
+        <span class="visually-hidden">Siguiente</span>
+    </button>
+
+</div>
+
+<!-- HERO -->
+<section class="hero">
+    <div class="hero-content">
+        <h1 class="hero-title">Descubre los mejores eventos</h1>
+        <p class="hero-subtitle">Conciertos, festivales, teatro y mucho más</p>
+        <a href="/eventos" class="btn btn-hero">Explorar eventos</a>
+    </div>
+</section>
+
+<!-- EVENTOS DESTACADOS -->
+<div class="container">
+
+    <h2 class="section-title">Eventos destacados</h2>
+
+    <div class="row g-4">
+
+        <div class="col-md-3"
+             th:each="e, stat : ${eventosDestacados}"
+             th:if="${stat.index} < 4">
+
+            <div class="event-card">
+
+                <img th:src="@{'/img/eventos/' + ${e.imagen}}" class="event-img">
+
+                <div class="event-info">
+
+                    <div class="event-title" th:text="${e.nombre}"></div>
+
+                    <div class="event-date" th:text="${e.fecha}"></div>
+
+                    <div class="event-location" th:text="${e.sitio}"></div>
+
+                    <a th:href="@{'/compras/nuevo/' + ${e.id_evento}}" class="btn btn-primary w-100 mt-2">Comprar</a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- FOOTER -->
+<th:block th:replace="fragments/footer :: footer"></th:block>
+
+<!-- BOOTSTRAP JS (NECESARIO PARA QUE FUNCIONE EL CARRUSEL) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

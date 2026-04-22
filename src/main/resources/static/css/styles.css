@@ -1,0 +1,357 @@
+/* ============================
+   TIPOGRAFÍA Y BASE
+============================ */
+body {
+    background-color: #FFF7FA; /* fondo pastel suave */
+    font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #444;
+    margin: 0;
+    padding: 0;
+}
+
+h1, h2, h3, h4 {
+    font-weight: 600;
+    color: #333;
+}
+
+p {
+    color: #555;
+}
+
+/* Contenedor general */
+.container {
+    max-width: 1100px;
+    margin-top: 40px;
+}
+
+/* ============================
+   HEADER PASTEL
+============================ */
+.pastel-header {
+    background: linear-gradient(90deg, #A8D8FF, #E5C6FF);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+.pastel-header .logo {
+    font-weight: 700;
+    color: #fff;
+    margin: 0;
+    font-size: 1.6rem;
+}
+
+.pastel-header nav a {
+    margin-left: 20px;
+    color: #fff;
+    font-weight: 500;
+    text-decoration: none;
+    transition: opacity .2s;
+}
+
+.pastel-header nav a:hover {
+    opacity: 0.7;
+}
+
+/* ============================
+   FOOTER PASTEL
+============================ */
+.pastel-footer {
+    background-color: #FFE3EC;
+    border-top: 1px solid #F5B5C5;
+    color: #555;
+    font-size: 0.9rem;
+}
+
+/* ============================
+   TARJETAS
+============================ */
+.card {
+    background: #FFFFFF;
+    border-radius: 16px;
+    border: 1px solid #E6E6E6;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+}
+
+.card-header {
+    background: linear-gradient(90deg, #A8D8FF, #E5C6FF);
+    color: #fff;
+    font-weight: 600;
+    font-size: 1.2rem;
+    border-radius: 16px 16px 0 0;
+}
+
+/* ============================
+   TABLAS (para tu lista actual)
+============================ */
+.table {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #E6E6E6;
+}
+
+.table thead {
+    background: #F3E8FF; /* lavanda pastel */
+}
+
+.table th {
+    font-weight: 600;
+    color: #444;
+    padding: 12px;
+}
+
+.table td {
+    padding: 12px;
+}
+
+.table tbody tr:hover {
+    background-color: #FFE6EE; /* rosa pastel */
+}
+
+/* ============================
+   BOTONES
+============================ */
+.btn {
+    border-radius: 10px;
+    font-weight: 500;
+    padding: 8px 16px;
+}
+
+.btn-primary {
+    background-color: #A8D8FF;
+    border-color: #8CC7F5;
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background-color: #8CC7F5;
+}
+
+.btn-secondary {
+    background-color: #E5C6FF;
+    border-color: #D3AFFF;
+    color: #fff;
+}
+
+.btn-secondary:hover {
+    background-color: #D3AFFF;
+}
+
+.btn-success {
+    background-color: #B8F2D8;
+    border-color: #9EEBC7;
+    color: #2F4F4F;
+}
+
+.btn-success:hover {
+    background-color: #9EEBC7;
+}
+
+.btn-danger {
+    background-color: #FFB3C1;
+    border-color: #FF9AA9;
+    color: #fff;
+}
+
+.btn-danger:hover {
+    background-color: #FF9AA9;
+}
+
+.btn-warning {
+    background-color: #FFE8A3;
+    border-color: #FFD86B;
+    color: #6B4E00;
+}
+
+.btn-warning:hover {
+    background-color: #FFD86B;
+}
+
+/* ============================
+   FORMULARIOS
+============================ */
+input, select {
+    border-radius: 8px !important;
+    border: 1px solid #E6E6E6 !important;
+    background-color: #FFFFFF;
+    padding: 8px;
+}
+
+input:focus, select:focus {
+    border-color: #A8D8FF !important;
+    box-shadow: 0 0 6px rgba(168,216,255,0.6) !important;
+}
+
+/* ============================
+   ALERTAS
+============================ */
+.alert-success {
+    background-color: #B8F2D8;
+    border-left: 6px solid #9EEBC7;
+    border-radius: 10px;
+    color: #2F4F4F;
+}
+
+.alert-danger {
+    background-color: #FFB3C1;
+    border-left: 6px solid #FF9AA9;
+    border-radius: 10px;
+    color: #6B1A1A;
+}
+
+/* ============================
+   IMÁGENES
+============================ */
+.img-thumbnail {
+    border-radius: 12px;
+    border: 2px solid #E6E6E6;
+}
+
+/* ============================
+   LINKS
+============================ */
+a {
+    color: #8CC7F5;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* ============================
+   TARJETAS DE EVENTOS (para cuando cambies tu lista.html)
+============================ */
+.event-card {
+    border-radius: 18px;
+    overflow: hidden;
+    transition: transform .2s, box-shadow .2s;
+}
+
+.event-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+}
+
+.event-img {
+    height: 220px;
+    object-fit: cover;
+}
+
+.event-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.event-info {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.event-desc {
+    font-size: 0.9rem;
+    color: #555;
+    height: 50px;
+    overflow: hidden;
+}
+
+/*--------------------------------------------------------------------------*/
+
+.event-card {
+    background: #2A2A2A;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.05);
+    transition: 0.25s;
+}
+
+.event-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 0 18px rgba(200,162,255,0.25);
+}
+
+.event-img {
+    width: 100%;
+    height: 180px; /* MÁS PEQUEÑO */
+    object-fit: cover;
+}
+
+.event-info {
+    padding: 12px;
+}
+
+.event-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #FFFFFF;
+}
+
+.event-date,
+.event-location {
+    font-size: 0.85rem;
+    color: #CCCCCC;
+}
+
+/* ============================
+   TARJETAS PEQUEÑAS PARA INDEX
+============================ */
+.event-card-small {
+    background: #2A2A2A; /* gris oscuro suave */
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.06);
+    transition: transform .2s, box-shadow .2s;
+}
+
+.event-card-small:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 0 16px rgba(200,162,255,0.25);
+}
+
+/* Imagen más pequeña */
+.event-img-small {
+    width: 100%;
+    height: 170px;
+    object-fit: cover;
+}
+
+/* Información compacta */
+.event-info-small {
+    padding: 12px;
+}
+
+.event-title-small {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #FFFFFF;
+}
+
+.event-date-small {
+    font-size: 0.85rem;
+    color: #CCCCCC;
+}
+
+.event-location-small {
+    font-size: 0.85rem;
+    color: #9EEBC7;
+}
+
+/* CARRUSEL */
+
+.carousel-inner {
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.carousel-indicators button {
+    background-color: #ffb3d9; 
+}
+
+.carousel-indicators .active {
+    background-color: #ff66b3;
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    filter: invert(100%);
+}

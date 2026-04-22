@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head></head>
+
+<body>
+
+<header th:fragment="header" 
+        class="shadow-sm mb-4"
+        style="background: linear-gradient(135deg, #C8A2FF, #868181);">
+
+    <div class="container d-flex justify-content-between align-items-center py-3">
+
+        <a href="/" class="fw-bold fs-3" 
+           style="text-decoration:none; color:white;">
+            Entralia
+        </a>
+
+        <nav>
+            <a href="/eventos" class="btn btn-light me-2">Eventos</a>
+            <a href="/usuarios/perfil" class="btn btn-outline-light">Mi perfil</a>
+        </nav>
+
+    </div>
+
+</header>
+
+
+</body>
+</html>
