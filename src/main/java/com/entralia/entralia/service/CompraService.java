@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -35,102 +36,90 @@ public class CompraService {
     @Qualifier("asientoDAOJdbc")
     private AsientoDAO asientoDAO;
 
-    // PROCESA UNA COMPRA COMPLETA CON DETALLES
+    // ⭐ PROCESAR COMPRA COMPLETA
     public void procesarCompra(Compra compra) {
-
-        // ⭐ LOG 1 — QUÉ DETALLES LLEGAN DEL FORMULARIO
-        System.out.println("=== DETALLES RECIBIDOS ===");
-        for (DetalleCompra d : compra.getDetalles()) {
-            System.out.println("Detalle:");
-            System.out.println(" - id_tipo_entrada: " + d.getId_tipo_entrada());
-            System.out.println(" - id_evento (antes): " + d.getId_evento());
-            System.out.println(" - cantidad: " + d.getCantidad());
-        }
-        System.out.println("===========================");
 
         // 1. Guardar compra y obtener ID generado
         int idCompra = compraDAO.guardar(compra);
 
         double totalCompra = 0.0;
 
-        // 2. Procesar cada detalle
+        // ⭐ Lista final de detalles (ya divididos si hay asientos)
+        List<DetalleCompra> detallesFinales = new ArrayList<>();
+
+        // 2. Procesar cada detalle recibido del formulario
         for (DetalleCompra d : compra.getDetalles()) {
 
-            // Obtener tipo de entrada completo
             var tipo = tipoEntradaDAO.obtenerPorId(d.getId_tipo_entrada());
-
             if (tipo == null) {
                 throw new RuntimeException("Tipo de entrada no encontrado");
             }
 
-            // Obtener el evento asociado
             Evento evento = eventoDAO.obtenerPorId(tipo.getId_evento());
-
-            // ⭐ LOG 2 — ¿EL EVENTO USA ASIENTOS?
-            System.out.println("Evento ID " + evento.getId_evento() +
-                    " usa asientos: " + evento.isUsa_asientos());
 
             // Verificar stock
             if (d.getCantidad() > tipo.getStock()) {
                 throw new RuntimeException("No hay stock suficiente para " + tipo.getNombre());
             }
 
-            // Asignar precio unitario
-            d.setPrecio_unitario(tipo.getPrecio());
+            // ⭐ EVENTO SIN ASIENTOS → procesar normal
+            if (!evento.isUsa_asientos()) {
 
-            // Calcular total del detalle
-            double totalDetalle = d.getCantidad() * tipo.getPrecio();
-            totalCompra += totalDetalle;
+                d.setId_compra(idCompra);
+                d.setId_evento(evento.getId_evento());
+                d.setPrecio_unitario(tipo.getPrecio());
+                d.setTipoEntrada(tipo);
 
-            // Asignar compra y tipoEntrada
-            d.setId_compra(idCompra);
-            d.setTipoEntrada(tipo);
-
-            // asignar id_evento al detalle
-            d.setId_evento(tipo.getId_evento());
-
-            // ASIGNACIÓN DE ASIENTO (solo si el evento usa asientos)
-            if (evento.isUsa_asientos()) {
-
-                // Solo permitimos 1 entrada por compra en eventos con asiento
-                if (d.getCantidad() > 1) {
-                    throw new RuntimeException("Los eventos con asiento solo permiten 1 entrada por compra.");
-                }
-
-                // Buscar asiento libre
-                Asiento asientoLibre = asientoDAO.obtenerAsientoLibre(evento.getId_evento());
-
-                // ⭐ LOG 3 — ¿QUÉ ASIENTO SE HA ENCONTRADO?
-                System.out.println("Asiento libre encontrado: " +
-                        (asientoLibre != null ? asientoLibre.getNumero() : "NINGUNO"));
-
-                if (asientoLibre == null) {
-                    throw new RuntimeException("No quedan asientos disponibles para este evento.");
-                }
-
-                // Marcar asiento como ocupado
-                asientoDAO.marcarOcupado(asientoLibre.getId_asiento());
-
-                // Guardar asiento en el detalle
-                d.setAsiento(asientoLibre.getNumero());
-
-                // ⭐ LOG 4 — ASIENTO ASIGNADO
-                System.out.println("Asiento asignado: " + d.getAsiento());
+                totalCompra += d.getPrecioTotal();
+                detallesFinales.add(d);
+                continue;
             }
 
-            // ⭐ LOG 5 — JUSTO ANTES DE GUARDAR EL DETALLE
-            System.out.println("Guardando detalle con asiento: " + d.getAsiento());
+            // ⭐ EVENTO CON ASIENTOS → dividir en entradas individuales
+            for (int i = 0; i < d.getCantidad(); i++) {
 
-            // Guardar detalle
-            detalleDAO.guardar(d);
+                Asiento asientoLibre = asientoDAO.obtenerAsientoLibre(evento.getId_evento());
+                if (asientoLibre == null) {
+                    throw new RuntimeException("No quedan asientos disponibles.");
+                }
+
+                DetalleCompra nuevo = new DetalleCompra();
+                nuevo.setId_compra(idCompra);
+                nuevo.setId_evento(evento.getId_evento());
+                nuevo.setId_tipo_entrada(tipo.getId_tipo_entrada());
+                nuevo.setCantidad(1);
+                nuevo.setPrecio_unitario(tipo.getPrecio());
+                nuevo.setTipoEntrada(tipo);
+                nuevo.setAsiento(asientoLibre.getNumero());
+
+                asientoDAO.marcarOcupado(asientoLibre.getId_asiento());
+
+                totalCompra += nuevo.getPrecioTotal();
+                detallesFinales.add(nuevo);
+            }
         }
 
-        // 3. Guardar total de la compra
-        compra.setTotal(totalCompra);
+        // 3. Guardar todos los detalles finales
+        for (DetalleCompra df : detallesFinales) {
+            detalleDAO.guardar(df);
+        }
 
-        // 4. Actualizar compra
+        // 4. Guardar total de la compra y detalles finales en el objeto compra
         compra.setId_compra(idCompra);
+        compra.setTotal(totalCompra);
+        compra.setDetalles(detallesFinales);
+
+        // 5. Actualizar compra en BD
         compraDAO.actualizar(compra);
+    }
+
+    // ⭐ MÉTODOS DE CONSULTA
+    public List<Compra> listarComprasPorUsuario(int idUsuario) {
+        return compraDAO.listarComprasPorUsuario(idUsuario);
+    }
+
+    public List<DetalleCompra> listarDetallesPorCompra(int idCompra) {
+        return detalleDAO.listarPorCompra(idCompra);
     }
 
     public int guardarCompra(Compra compra) {
@@ -152,13 +141,5 @@ public class CompraService {
     public List<Compra> listarCompras() {
         return compraDAO.listarTodos();
     }
-
-    public List<Compra> listarComprasPorUsuario(int idUsuario) {
-        return compraDAO.listarComprasPorUsuario(idUsuario);
-    }
-
-    public List<DetalleCompra> listarDetallesPorCompra(int idCompra) {
-        return detalleDAO.listarPorCompra(idCompra);
-    }
-
 }
+

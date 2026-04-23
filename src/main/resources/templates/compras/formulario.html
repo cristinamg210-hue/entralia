@@ -45,7 +45,6 @@
                             th:onchange="'actualizarLinea(' + ${iter.index} + ')'"
                             required>
 
-                        <!-- OPCIONES DEL SELECT -->
                         <option th:each="t : ${tiposEntrada}"
                                 th:value="${t.id_tipo_entrada}"
                                 th:text="${t.stock == 0 ? t.nombre + ' (AGOTADAS)' 
@@ -68,8 +67,6 @@
                     <input type="hidden"
                     th:name="'detalles[' + ${iter.index} + '].id_evento'"
                     th:value="${idEvento}" />
-
-
 
                 </div>
 
@@ -169,6 +166,7 @@
 
 </div>
 
+
 <!-- SCRIPT PRINCIPAL -->
 <script>
 
@@ -196,7 +194,14 @@
             cantidadInput.value = 0;
         }
 
-        const cantidad = parseInt(cantidadInput.value) || 0;
+        let cantidad = parseInt(cantidadInput.value) || 0;
+
+        // 🔒 EVITAR QUE EL USUARIO ESCRIBA MÁS DE LO PERMITIDO
+        if (cantidad > stock) {
+            cantidad = stock;
+            cantidadInput.value = stock;
+        }
+
         const total = precio * cantidad;
 
         precioUnitarioInput.value = precio.toFixed(2);
@@ -208,6 +213,18 @@
         // Aviso de pocas entradas
         const aviso = document.getElementById("avisoPocas_" + index);
         aviso.style.display = (stock > 0 && stock < 10) ? "block" : "none";
+
+        // 🔒 BLOQUEAR BOTÓN AGREGAR SI EL TIPO ESTÁ AGOTADO
+        const btnAgregar = document.getElementById("btnAgregarLinea");
+        if (stock === 0) {
+            btnAgregar.disabled = true;
+            btnAgregar.style.opacity = "0.5";
+            btnAgregar.style.cursor = "not-allowed";
+        } else {
+            btnAgregar.disabled = false;
+            btnAgregar.style.opacity = "1";
+            btnAgregar.style.cursor = "pointer";
+        }
 
         actualizarResumen();
     }
@@ -276,7 +293,6 @@
 
         let hayStock = false;
 
-        // Revisar TODAS las opciones de TODOS los selects
         selects.forEach(select => {
             Array.from(select.options).forEach(opt => {
                 const stock = parseInt(opt.dataset.stock);

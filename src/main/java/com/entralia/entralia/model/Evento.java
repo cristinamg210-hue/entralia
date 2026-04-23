@@ -15,6 +15,8 @@ public class Evento {
     private String descripcion;
     private boolean usa_asientos;
 
+    // Campo calculado (NO va en la BD)
+    private int stockTotal;
 
     public Evento() {}
 
@@ -92,4 +94,12 @@ public class Evento {
         this.usa_asientos = usa_asientos;
     }
 
+    // ⭐ GETTER y SETTER del stock total
+    public int getStockTotal() {
+        return stockTotal;
+    }
+
+    public void setStockTotal(int stockTotal) {
+        this.stockTotal = stockTotal;
+    }
 }

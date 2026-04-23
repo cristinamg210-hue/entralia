@@ -33,9 +33,24 @@ public class EventoController {
 
     private final String RUTA_IMAGENES = "C:/entralia/img/eventos/";
 
+    // LISTAR EVENTOS (Explorar eventos)
     @GetMapping
     public String listarEventos(Model model) {
-        model.addAttribute("eventos", eventoService.listarEventos());
+
+        List<Evento> eventos = eventoService.listarEventos();
+
+        // Calcular stockTotal para cada evento
+        for (Evento e : eventos) {
+            List<TipoEntrada> tipos = tipoEntradaService.listarPorEvento(e.getId_evento());
+
+            int stockTotal = tipos.stream()
+                    .mapToInt(TipoEntrada::getStock)
+                    .sum();
+
+            e.setStockTotal(stockTotal);
+        }
+
+        model.addAttribute("eventos", eventos);
         return "eventos/lista";
     }
 
@@ -61,13 +76,11 @@ public class EventoController {
 
         if (!imagenFile.isEmpty()) {
 
-            // Crear carpeta si no existe
             Path directorio = Paths.get(RUTA_IMAGENES);
             if (!Files.exists(directorio)) {
                 Files.createDirectories(directorio);
             }
 
-            // Guardar archivo
             String nombreArchivo = imagenFile.getOriginalFilename();
             Path ruta = Paths.get(RUTA_IMAGENES + nombreArchivo);
             Files.write(ruta, imagenFile.getBytes());
@@ -128,6 +141,7 @@ public class EventoController {
         return "redirect:/eventos";
     }
 
+    // DETALLE DEL EVENTO
     @GetMapping("/{id}")
     public String verDetalleEvento(@PathVariable("id") Integer id, Model model) {
 
@@ -137,6 +151,13 @@ public class EventoController {
         List<TipoEntrada> tipos = tipoEntradaService.listarPorEvento(id);
         model.addAttribute("tiposEntrada", tipos);
 
+        int stockTotal = tipos.stream()
+                .mapToInt(TipoEntrada::getStock)
+                .sum();
+
+        model.addAttribute("stockTotal", stockTotal);
+
         return "eventos/detalle";
     }
+
 }

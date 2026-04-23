@@ -25,7 +25,6 @@ public class CompraController {
     @Autowired
     private TipoEntradaService tipoEntradaService;
 
-    // FORMULARIO NUEVO
     @GetMapping("/nuevo/{idEvento}")
     public String nuevaCompra(@PathVariable int idEvento,
                               HttpSession session,
@@ -46,7 +45,6 @@ public class CompraController {
         return "compras/formulario";
     }
 
-    // AÑADIR LÍNEA
     @PostMapping("/agregar-detalle")
     public String agregarDetalle(@ModelAttribute Compra compra,
                                  @RequestParam int idEvento,
@@ -61,7 +59,6 @@ public class CompraController {
         return "compras/formulario";
     }
 
-    // ELIMINAR LÍNEA
     @PostMapping("/eliminar-detalle")
     public String eliminarDetalle(@ModelAttribute Compra compra,
                                   @RequestParam int index,
@@ -79,25 +76,16 @@ public class CompraController {
         return "compras/formulario";
     }
 
-    // GUARDAR COMPRA (CORREGIDO)
     @PostMapping("/guardar")
     public String guardarCompra(@ModelAttribute Compra compra,
                                 @RequestParam int idEvento,
                                 HttpSession session) {
 
         Usuario usuario = (Usuario) session.getAttribute("usuarioLogueado");
-        if (usuario == null) {
-            return "redirect:/login";
-        }
+        if (usuario == null) return "redirect:/login";
 
         compra.setId_usuario(usuario.getId_usuario());
 
-        // ❌ ESTA PARTE SE ELIMINA PORQUE ROMPE LA ASIGNACIÓN DE ASIENTOS
-        // for (DetalleCompra d : compra.getDetalles()) {
-        //     d.setId_evento(idEvento);
-        // }
-
-        // ✔ PROCESAR COMPRA COMPLETA (asientos, stock, totales)
         compraService.procesarCompra(compra);
 
         session.setAttribute("ultimaCompra", compra);
@@ -105,15 +93,12 @@ public class CompraController {
         return "redirect:/compras/confirmacion";
     }
 
-    // CONFIRMACIÓN
     @GetMapping("/confirmacion")
     public String mostrarConfirmacion(HttpSession session, Model model) {
 
         Compra compra = (Compra) session.getAttribute("ultimaCompra");
 
-        if (compra == null) {
-            return "redirect:/eventos";
-        }
+        if (compra == null) return "redirect:/eventos";
 
         model.addAttribute("compra", compra);
 
@@ -121,26 +106,21 @@ public class CompraController {
     }
 
     @GetMapping("/mis-compras")
-public String verMisCompras(HttpSession session, Model model) {
+    public String verMisCompras(HttpSession session, Model model) {
 
-    Usuario usuario = (Usuario) session.getAttribute("usuarioLogueado");
+        Usuario usuario = (Usuario) session.getAttribute("usuarioLogueado");
+        if (usuario == null) return "redirect:/login";
 
-    if (usuario == null) {
-        return "redirect:/login";
+        List<Compra> compras = compraService.listarComprasPorUsuario(usuario.getId_usuario());
+
+        for (Compra c : compras) {
+            c.setDetalles(compraService.listarDetallesPorCompra(c.getId_compra()));
+        }
+
+        model.addAttribute("compras", compras);
+
+        return "compras/mis-compras";
     }
-
-    // Obtener compras del usuario
-    List<Compra> compras = compraService.listarComprasPorUsuario(usuario.getId_usuario());
-
-    // Cargar detalles de cada compra
-    for (Compra c : compras) {
-        c.setDetalles(compraService.listarDetallesPorCompra(c.getId_compra()));
-    }
-
-    model.addAttribute("compras", compras);
-
-    return "compras/mis-compras";
 }
 
-}
 

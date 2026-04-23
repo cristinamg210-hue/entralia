@@ -24,21 +24,42 @@
 <p><strong>Aforo:</strong> <span th:text="${evento.aforo_total}"></span></p>
 <p><strong>Fecha:</strong> <span th:text="${evento.fecha}"></span></p>
 
+<!-- STOCK TOTAL -->
+<p><strong>Entradas disponibles:</strong>
+    <span th:text="${stockTotal}"></span>
+</p>
+
+<!-- MENSAJE SI NO HAY STOCK -->
+<div th:if="${stockTotal == 0}" class="alert alert-danger fw-bold">
+    Entradas agotadas
+</div>
+
+<!-- FORMULARIO DE COMPRA -->
 <form th:action="@{'/compras/nuevo/' + ${evento.id_evento}}" method="get" class="mt-4">
 
     <label class="form-label">Tipo de entrada:</label>
-    <select name="id_tipo_entrada" class="form-select mb-3">
+    <select name="id_tipo_entrada" class="form-select mb-3"
+            th:disabled="${stockTotal == 0}">
         <option th:each="t : ${tiposEntrada}"
                 th:value="${t.id_tipo_entrada}"
-                th:text="${t.nombre + ' - ' + t.precio + '€'}">
+                th:text="${t.nombre + ' - ' + t.precio + '€ (Stock: ' + t.stock + ')'}"
+                th:disabled="${t.stock == 0}">
         </option>
     </select>
 
     <label class="form-label">Cantidad:</label>
-    <input type="number" name="cantidad" min="1" value="1" class="form-control mb-3"/>
+    <input type="number" name="cantidad" min="1" value="1"
+           class="form-control mb-3"
+           th:disabled="${stockTotal == 0}"/>
 
-    <button type="submit" class="btn btn-success">Comprar</button>
+    <button type="submit"
+            class="btn btn-success"
+            th:disabled="${stockTotal == 0}">
+        Comprar
+    </button>
 </form>
 
 </body>
 </html>
+
+
