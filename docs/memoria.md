@@ -87,6 +87,7 @@ La base de datos está diseñada en MySQL y contiene las tablas principales:
   - DETALLE_COMPRA
   - ASIENTO (solo para eventos con asientos)
 El diseño permite controlar el stock, registrar compras y mantener la información organizada.
+<img width="688" height="698" alt="image" src="https://github.com/user-attachments/assets/0d60e5e4-1e1f-4cba-9d63-9ae3d0f589f1" />
 
 7. Diseño del software
    7.1 Diagrama de casos de uso
