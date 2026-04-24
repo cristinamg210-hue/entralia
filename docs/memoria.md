@@ -91,6 +91,7 @@ El diseño permite controlar el stock, registrar compras y mantener la informaci
 7. Diseño del software
    7.1 Diagrama de casos de uso
    Acciones principales del usuario: ver eventos, comprar entradas, iniciar sesión, ver compras, etc.
+   <img width="764" height="414" alt="image" src="https://github.com/user-attachments/assets/9dcd3ed3-2d28-40af-b794-856c5fcac882" />
 
    7.2 Diagrama de clases
    Muestra las entidades del sistema y sus relaciones: Usuario, Evento, TipoEntrada, Compra, DetalleCompra, Asiento…
