@@ -87,24 +87,28 @@ La base de datos está diseñada en MySQL y contiene las tablas principales:
   - DETALLE_COMPRA
   - ASIENTO (solo para eventos con asientos)
 El diseño permite controlar el stock, registrar compras y mantener la información organizada.
+<img width="688" height="698" alt="image" src="https://github.com/user-attachments/assets/0d60e5e4-1e1f-4cba-9d63-9ae3d0f589f1" />
 
 7. Diseño del software
    7.1 Diagrama de casos de uso
    Acciones principales del usuario: ver eventos, comprar entradas, iniciar sesión, ver compras, etc.
+   <img width="1412" height="887" alt="image" src="https://github.com/user-attachments/assets/edac1f0e-a4d0-40a8-a538-dfb68367fd7a" />
 
    7.2 Diagrama de clases
    Muestra las entidades del sistema y sus relaciones: Usuario, Evento, TipoEntrada, Compra, DetalleCompra, Asiento…
+   <img width="1299" height="860" alt="image" src="https://github.com/user-attachments/assets/57784904-966f-4989-9280-3e4ddad1acfe" />
 
    7.3 Diagramas de secuencia
    Explican procesos como:
    - Compra de entradas
    - Inicio de sesión
    - Asignación de asientos
+   <img width="1473" height="838" alt="image" src="https://github.com/user-attachments/assets/a131dd09-c85c-4633-838d-c6431704c620" />
      
    7.4 Relación con MVC
    Los diagramas ayudan a visualizar cómo fluye la información entre controladores, servicios, repositorios y vistas.
 
-8. Implementación
+9. Implementación
 Se ha organizado de forma modular:
   - Los controladores gestionan las peticiones.
   - Los servicios contienen la lógica (stock, compras, asientos…).
