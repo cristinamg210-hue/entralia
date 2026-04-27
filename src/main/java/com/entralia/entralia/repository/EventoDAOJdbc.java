@@ -9,8 +9,8 @@ import java.util.List;
 @Repository("eventoDAOJdbc")
 public class EventoDAOJdbc implements EventoDAO {
 
-    private final Conexion conexion;
-
+    private final Conexion conexion; // Acceso al JdbcTemplate
+ 
     @Autowired
     public EventoDAOJdbc(Conexion conexion) {
         this.conexion = conexion;
@@ -18,6 +18,9 @@ public class EventoDAOJdbc implements EventoDAO {
 
     @Override
     public void guardar(Evento evento) {
+
+        // SQL para insertar un nuevo evento
+
         String sql = "INSERT INTO evento (nombre, aforo_total, sitio, fecha, imagen, descripcion, usa_asientos) VALUES (?, ?, ?, ?, ?, ?, ?)";
         conexion.getJdbcTemplate().update(sql,
                 evento.getNombre(),
@@ -26,12 +29,15 @@ public class EventoDAOJdbc implements EventoDAO {
                 evento.getFecha(),
                 evento.getImagen(),
                 evento.getDescripcion(),
-                evento.isUsa_asientos()
+                evento.isUsa_asientos() // TRUE/FALSE según si usa asientos numerados
         );
     }
 
     @Override
     public void actualizar(Evento evento) {
+
+        // SQL para actualizar un evento existente
+
         String sql = "UPDATE evento SET nombre = ?, aforo_total = ?, sitio = ?, fecha = ?, imagen = ?, descripcion = ?, usa_asientos = ? WHERE id_evento = ?";
         conexion.getJdbcTemplate().update(sql,
                 evento.getNombre(),
@@ -53,8 +59,14 @@ public class EventoDAOJdbc implements EventoDAO {
 
     @Override
     public Evento obtenerPorId(int id) {
+
+        // SQL para obtener un evento por su ID
+
         String sql = "SELECT * FROM evento WHERE id_evento = ?";
         return conexion.getJdbcTemplate().queryForObject(sql, (rs, rowNum) -> {
+
+            // Construye el objeto Evento con los datos de la BD
+
             Evento e = new Evento(
                     rs.getInt("id_evento"),
                     rs.getString("nombre"),
@@ -64,6 +76,9 @@ public class EventoDAOJdbc implements EventoDAO {
                     rs.getString("imagen"),
                     rs.getString("descripcion")
             );
+
+            // Campo booleano: si usa asientos numerados
+
             e.setUsa_asientos(rs.getBoolean("usa_asientos"));
             return e;
         }, id);
@@ -71,6 +86,9 @@ public class EventoDAOJdbc implements EventoDAO {
 
     @Override
     public List<Evento> listarTodos() {
+
+        // SQL para listar todos los eventos
+        
         String sql = "SELECT * FROM evento";
         return conexion.getJdbcTemplate().query(sql, (rs, rowNum) -> {
             Evento e = new Evento(

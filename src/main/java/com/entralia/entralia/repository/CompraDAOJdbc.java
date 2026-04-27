@@ -17,7 +17,7 @@ public class CompraDAOJdbc implements CompraDAO {
     private final Conexion conexion;
 
     @Autowired
-    private DetalleCompraDAO detalleCompraDAO;
+    private DetalleCompraDAO detalleCompraDAO; // Para cargar los detalles de cada compra
 
     @Autowired
     public CompraDAOJdbc(Conexion conexion) {
@@ -26,15 +26,20 @@ public class CompraDAOJdbc implements CompraDAO {
 
     @Override
     public int guardar(Compra compra) {
+
+        // SQL: solo guarda el id_usuario, fecha_compra se genera sola (DEFAULT CURRENT_TIMESTAMP)
+
         String sql = "INSERT INTO compra (id_usuario) VALUES (?)";
 
-        KeyHolder keyHolder = new GeneratedKeyHolder();
+        KeyHolder keyHolder = new GeneratedKeyHolder(); // Para obtener el ID generado
 
         conexion.getJdbcTemplate().update(connection -> {
             PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             ps.setInt(1, compra.getId_usuario());
             return ps;
         }, keyHolder);
+
+        // Devuelve el ID autogenerado de la compra
 
         return keyHolder.getKey().intValue();
     }
@@ -55,6 +60,9 @@ public class CompraDAOJdbc implements CompraDAO {
 
     @Override
 public Compra obtenerPorId(int id) {
+
+    // Obtiene la compra básica
+
     String sql = "SELECT * FROM compra WHERE id_compra = ?";
 
     Compra compra = conexion.getJdbcTemplate().queryForObject(sql, (rs, rowNum) ->
@@ -64,8 +72,12 @@ public Compra obtenerPorId(int id) {
                     rs.getString("fecha_compra")
             ), id);
 
+    // Carga los detalles asociados
+
     List<DetalleCompra> detalles = detalleCompraDAO.listarPorCompra(id);
     compra.setDetalles(detalles);
+
+    // Calcula el total sumando cada detalle
 
     double total = detalles.stream()
             .mapToDouble(d -> d.getCantidad() * d.getPrecio_unitario())
@@ -77,6 +89,9 @@ public Compra obtenerPorId(int id) {
 
 @Override
 public List<Compra> listarTodos() {
+
+    // Lista todas las compras
+
     String sql = "SELECT * FROM compra";
 
     return conexion.getJdbcTemplate().query(sql, (rs, rowNum) -> {
@@ -87,8 +102,12 @@ public List<Compra> listarTodos() {
                 rs.getString("fecha_compra")
         );
 
+        // Carga los detalles de cada compra
+
         List<DetalleCompra> detalles = detalleCompraDAO.listarPorCompra(compra.getId_compra());
         compra.setDetalles(detalles);
+
+        // Calcula el total
 
         double total = detalles.stream()
                 .mapToDouble(d -> d.getCantidad() * d.getPrecio_unitario())
@@ -101,6 +120,9 @@ public List<Compra> listarTodos() {
 
 @Override
 public List<Compra> listarComprasPorUsuario(int idUsuario) {
+
+    // Lista compras del usuario ordenadas por fecha descendente
+
     String sql = "SELECT * FROM compra WHERE id_usuario = ? ORDER BY fecha_compra DESC";
 
     return conexion.getJdbcTemplate().query(sql, (rs, rowNum) -> {
@@ -111,9 +133,13 @@ public List<Compra> listarComprasPorUsuario(int idUsuario) {
                 rs.getString("fecha_compra")
         );
 
+        // Carga los detalles de la compra
+
         List<DetalleCompra> detalles = detalleCompraDAO.listarPorCompra(compra.getId_compra());
         compra.setDetalles(detalles);
 
+        // Calcula el total
+        
         double total = detalles.stream()
                 .mapToDouble(d -> d.getCantidad() * d.getPrecio_unitario())
                 .sum();

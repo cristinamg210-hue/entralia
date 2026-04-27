@@ -14,6 +14,6 @@ public interface DetalleCompraDAO {
     void actualizar(DetalleCompra detalle);  
     void eliminar(int id);                      
     DetalleCompra obtenerPorId(int id);       
-    List<DetalleCompra> listarTodos();
+    List<DetalleCompra> listarTodos(); // Lista todos los detalles de compra de la BD
     List<DetalleCompra> listarPorCompra(int idCompra);
 }

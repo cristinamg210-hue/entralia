@@ -13,19 +13,20 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Controller
+@Controller // Controlador para la página principal
 public class HomeController {
 
     @Autowired
-    private EventoService eventoService;
+    private EventoService eventoService; // Servicio para obtener eventos
 
     @Autowired
-    private TipoEntradaService tipoEntradaService;
+    private TipoEntradaService tipoEntradaService; // Servicio para tipos de entrada
 
-    @GetMapping("/")
+    @GetMapping("/") // Ruta principal del proyecto
+
     public String index(Model model) {
 
-        // Obtener todos los eventos
+        // Obtengo todos los eventos de la base de datos
         List<Evento> eventos = eventoService.listarEventos();
 
         // CALCULAR STOCK TOTAL PARA CADA EVENTO
@@ -36,7 +37,7 @@ public class HomeController {
                     .mapToInt(TipoEntrada::getStock)
                     .sum();
 
-            e.setStockTotal(stockTotal); // ← IMPORTANTE
+            e.setStockTotal(stockTotal); // Guardo el stock total en el evento
         }
 
         // Filtrar solo eventos con imagen para el carrusel
@@ -44,20 +45,22 @@ public class HomeController {
                 .filter(e -> e.getImagen() != null && !e.getImagen().isEmpty())
                 .collect(Collectors.toList());
 
-        // Mezclar aleatoriamente
+        // Mezclo aleatoriamente para que el carrusel cambie cada vez
+
         Collections.shuffle(conImagen);
 
-        // Tomar 3 imágenes
+        // Selecciono solo 3 imágenes para el carrusel
+
         List<Evento> carrusel = conImagen.stream()
                 .limit(3)
                 .collect(Collectors.toList());
 
-        model.addAttribute("carruselEventos", carrusel);
+        model.addAttribute("carruselEventos", carrusel); // Envío el carrusel a la vista
 
-        // Eventos destacados (ya con stockTotal)
+        // Envío todos los eventos como "destacados"
         model.addAttribute("eventosDestacados", eventos);
 
-        return "index";
+        return "index"; // Carga la vista index.html
     }
 }
 

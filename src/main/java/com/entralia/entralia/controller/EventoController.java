@@ -21,25 +21,26 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
-@Controller
-@RequestMapping("/eventos")
+@Controller // Controlador que gestiona todo lo relacionado con eventos
+@RequestMapping("/eventos") // Todas las rutas empiezan por /eventos
 public class EventoController {
 
     @Autowired
-    private EventoService eventoService;
+    private EventoService eventoService; // Servicio con la lógica de eventos
 
     @Autowired
-    private TipoEntradaService tipoEntradaService;
+    private TipoEntradaService tipoEntradaService; // Servicio para tipos de entrada
 
-    private final String RUTA_IMAGENES = "C:/entralia/img/eventos/";
+    private final String RUTA_IMAGENES = "C:/entralia/img/eventos/"; // Carpeta donde guardo imágenes
 
     // LISTAR EVENTOS (Explorar eventos)
     @GetMapping
     public String listarEventos(Model model) {
 
-        List<Evento> eventos = eventoService.listarEventos();
+        List<Evento> eventos = eventoService.listarEventos(); // Obtengo todos los eventos
 
-        // Calcular stockTotal para cada evento
+        // Calculo el stock total sumando el stock de cada tipo de entrada
+
         for (Evento e : eventos) {
             List<TipoEntrada> tipos = tipoEntradaService.listarPorEvento(e.getId_evento());
 
@@ -47,7 +48,7 @@ public class EventoController {
                     .mapToInt(TipoEntrada::getStock)
                     .sum();
 
-            e.setStockTotal(stockTotal);
+            e.setStockTotal(stockTotal); // Guardo el stock total en el evento
         }
 
         model.addAttribute("eventos", eventos);
@@ -56,6 +57,8 @@ public class EventoController {
 
     @GetMapping("/nuevo")
     public String mostrarFormularioNuevo(Model model, HttpSession session) {
+
+        // Solo los administradores pueden crear eventos
 
         if (!"ADMIN".equals(session.getAttribute("usuarioRol"))) {
             return "redirect:/eventos";
@@ -69,26 +72,30 @@ public class EventoController {
     public String guardarEvento(@ModelAttribute Evento evento,
                                 @RequestParam("imagenFile") MultipartFile imagenFile,
                                 HttpSession session) throws IOException {
+        
+        // Solo ADMIN puede guardar
 
         if (!"ADMIN".equals(session.getAttribute("usuarioRol"))) {
             return "redirect:/eventos";
         }
 
+        // Si el usuario sube una imagen, la guardamos en la carpeta
+
         if (!imagenFile.isEmpty()) {
 
             Path directorio = Paths.get(RUTA_IMAGENES);
             if (!Files.exists(directorio)) {
-                Files.createDirectories(directorio);
+                Files.createDirectories(directorio); // Crea la carpeta si no existe
             }
 
             String nombreArchivo = imagenFile.getOriginalFilename();
             Path ruta = Paths.get(RUTA_IMAGENES + nombreArchivo);
-            Files.write(ruta, imagenFile.getBytes());
+            Files.write(ruta, imagenFile.getBytes()); // Guarda la imagen
 
-            evento.setImagen(nombreArchivo);
+            evento.setImagen(nombreArchivo); // Guardamos el nombre en la BD
         }
 
-        eventoService.guardarEvento(evento);
+        eventoService.guardarEvento(evento); // Guardamos el evento
         return "redirect:/eventos";
     }
 
@@ -98,6 +105,8 @@ public class EventoController {
         if (!"ADMIN".equals(session.getAttribute("usuarioRol"))) {
             return "redirect:/eventos";
         }
+
+        // Si se sube una nueva imagen, la guardamos igual que antes
 
         model.addAttribute("evento", eventoService.obtenerEventoPorId(id));
         return "eventos/formulario";
@@ -137,7 +146,7 @@ public class EventoController {
             return "redirect:/eventos";
         }
 
-        eventoService.eliminarEvento(id);
+        eventoService.eliminarEvento(id); // Elimina el evento
         return "redirect:/eventos";
     }
 
@@ -145,11 +154,13 @@ public class EventoController {
     @GetMapping("/{id}")
     public String verDetalleEvento(@PathVariable("id") Integer id, Model model) {
 
-        Evento evento = eventoService.obtenerEventoPorId(id);
+        Evento evento = eventoService.obtenerEventoPorId(id); // Busco el evento
         model.addAttribute("evento", evento);
 
-        List<TipoEntrada> tipos = tipoEntradaService.listarPorEvento(id);
+        List<TipoEntrada> tipos = tipoEntradaService.listarPorEvento(id); // Tipos de entrada del evento
         model.addAttribute("tiposEntrada", tipos);
+
+        // Calculo el stock total del evento
 
         int stockTotal = tipos.stream()
                 .mapToInt(TipoEntrada::getStock)
@@ -157,7 +168,7 @@ public class EventoController {
 
         model.addAttribute("stockTotal", stockTotal);
 
-        return "eventos/detalle";
+        return "eventos/detalle"; // Vista detalle.html
     }
 
 }

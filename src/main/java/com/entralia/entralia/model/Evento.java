@@ -13,7 +13,7 @@ public class Evento {
     private String fecha;
     private String imagen;
     private String descripcion;
-    private boolean usa_asientos;
+    private boolean usa_asientos; // Indica si el evento usa asientos numerados
 
     // Campo calculado (NO va en la BD)
     private int stockTotal;
@@ -94,7 +94,7 @@ public class Evento {
         this.usa_asientos = usa_asientos;
     }
 
-    // ⭐ GETTER y SETTER del stock total
+    // GETTER y SETTER del stock total
     public int getStockTotal() {
         return stockTotal;
     }

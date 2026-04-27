@@ -13,8 +13,10 @@
 
 <h2>Detalles de Compra</h2>
 
+<!-- Botón para crear un nuevo detalle -->
 <a href="/detalles-compra/nuevo" class="btn btn-primary mb-3">Nuevo Detalle</a>
 
+<!-- Tabla con todos los detalles de compra -->
 <table class="table table-striped">
     <thead>
         <tr>
@@ -26,6 +28,8 @@
         </tr>
     </thead>
     <tbody>
+
+        <!-- Recorremos la lista de detalles -->
         <tr th:each="d : ${detalles}">
             <td th:text="${d.idDetalle}"></td>
             <td th:text="${d.idCompra}"></td>

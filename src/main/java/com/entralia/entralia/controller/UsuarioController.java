@@ -12,68 +12,76 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-@Controller
-@RequestMapping("/usuarios")
+@Controller // Controlador que gestiona los usuarios
+@RequestMapping("/usuarios") // Todas las rutas empiezan por /usuarios
 public class UsuarioController {
 
     @Autowired
-    private UsuarioService usuarioService;
+    private UsuarioService usuarioService; // Servicio con la lógica de usuarios
 
     // LISTAR
-    @GetMapping
+    @GetMapping // Muestra la lista de usuarios
+
     public String listarUsuarios(Model model) {
         model.addAttribute("usuarios", usuarioService.listarUsuarios());
         return "usuarios/lista";
     }
 
     // FORMULARIO NUEVO
-    @GetMapping("/nuevo")
+    @GetMapping("/nuevo") // Muestra el formulario para crear un usuario
+
     public String mostrarFormularioNuevo(Model model) {
         model.addAttribute("usuario", new Usuario());
         return "usuarios/formulario";
     }
 
     // GUARDAR
-    @PostMapping("/guardar")
+    @PostMapping("/guardar") // Guarda un usuario nuevo
+
     public String guardarUsuario(@ModelAttribute Usuario usuario) {
         usuarioService.guardarUsuario(usuario);
         return "redirect:/usuarios";
     }
 
     // FORMULARIO EDITAR
-    @GetMapping("/editar/{id}")
+    @GetMapping("/editar/{id}") // Muestra el formulario para editar un usuario
+
     public String mostrarFormularioEditar(@PathVariable int id, Model model) {
         model.addAttribute("usuario", usuarioService.obtenerUsuarioPorId(id));
         return "usuarios/formulario";
     }
 
     // ACTUALIZAR
-    @PostMapping("/actualizar")
+    @PostMapping("/actualizar") // Actualiza un usuario existente
+
     public String actualizarUsuario(@ModelAttribute Usuario usuario) {
         usuarioService.actualizarUsuario(usuario);
         return "redirect:/usuarios";
     }
 
     // ELIMINAR
-    @GetMapping("/eliminar/{id}")
+    @GetMapping("/eliminar/{id}") // Elimina un usuario por su ID
+    
     public String eliminarUsuario(@PathVariable int id) {
         usuarioService.eliminarUsuario(id);
         return "redirect:/usuarios";
     }
 
     // PERFIL DEL USUARIO LOGUEADO
-    @GetMapping("/perfil")
+    @GetMapping("/perfil") // Muestra el perfil del usuario que ha iniciado sesión
     public String perfilUsuario(HttpSession session, Model model) {
 
         Usuario usuario = (Usuario) session.getAttribute("usuarioLogueado");
+
+        // Si no hay usuario en sesión, lo mando al login
 
         if (usuario == null) {
             return "redirect:/login";
         }
 
-        model.addAttribute("usuario", usuario);
+        model.addAttribute("usuario", usuario); // Envío los datos del usuario a la vista
 
-        return "usuarios/perfil";
+        return "usuarios/perfil"; // Vista perfil.html
     }
 }
 

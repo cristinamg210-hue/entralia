@@ -15,7 +15,7 @@ import java.util.List;
 @Service
 public class TipoEntradaService {
 
-    private final TipoEntradaDAO tipoEntradaDAO;
+    private final TipoEntradaDAO tipoEntradaDAO; // Acceso al DAO
 
     @Autowired
     public TipoEntradaService(@Qualifier("tipoEntradaDAOJdbc") TipoEntradaDAO tipoEntradaDAO) {

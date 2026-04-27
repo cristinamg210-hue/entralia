@@ -32,7 +32,7 @@
                 No quedan entradas disponibles para este evento.
             </div>
 
-            <!-- BLOQUES DE DETALLES -->
+            <!-- BLOQUES DE DETALLES (una línea por tipo de entrada) -->
             <div th:each="detalle, iter : *{detalles}" class="detalle-bloque mb-4 p-3">
 
                 <!-- SELECT DEL TIPO DE ENTRADA -->
@@ -45,6 +45,7 @@
                             th:onchange="'actualizarLinea(' + ${iter.index} + ')'"
                             required>
 
+                        <!-- Cada opción muestra nombre, precio y stock -->
                         <option th:each="t : ${tiposEntrada}"
                                 th:value="${t.id_tipo_entrada}"
                                 th:text="${t.stock == 0 ? t.nombre + ' (AGOTADAS)' 
@@ -65,9 +66,8 @@
 
                     <!-- ID DEL EVENTO PARA EL DETALLE -->
                     <input type="hidden"
-                    th:name="'detalles[' + ${iter.index} + '].id_evento'"
-                    th:value="${idEvento}" />
-
+                           th:name="'detalles[' + ${iter.index} + '].id_evento'"
+                           th:value="${idEvento}" />
                 </div>
 
                 <!-- CANTIDAD -->
@@ -86,32 +86,38 @@
                 <!-- PRECIO UNITARIO -->
                 <div class="mb-3">
                     <label class="form-label">Precio unitario (€)</label>
+
+                    <!-- Campo visible -->
                     <input type="text"
                            class="form-control"
                            th:id="'precioUnitario_' + ${iter.index}"
                            value="0.00"
                            readonly>
 
+                    <!-- Campo oculto que se envía al backend -->
                     <input type="hidden"
                            th:field="*{detalles[__${iter.index}__].precio_unitario}"
                            th:id="'precioUnitarioHidden_' + ${iter.index}">
                 </div>
 
-                <!-- TOTAL -->
+                <!-- TOTAL POR LÍNEA -->
                 <div class="mb-3">
                     <label class="form-label">Total (€)</label>
+
+                    <!-- Campo visible -->
                     <input type="text"
                            class="form-control"
                            th:id="'total_' + ${iter.index}"
                            value="0.00"
                            readonly>
 
+                    <!-- Campo oculto que se envía al backend -->
                     <input type="hidden"
                            th:field="*{detalles[__${iter.index}__].precioTotal}"
                            th:id="'totalHidden_' + ${iter.index}">
                 </div>
 
-                <!-- BOTÓN ELIMINAR -->
+                <!-- BOTÓN ELIMINAR LÍNEA -->
                 <button type="submit"
                         formaction="/compras/eliminar-detalle"
                         formmethod="post"
@@ -123,7 +129,7 @@
 
             </div>
 
-            <!-- BOTÓN AÑADIR LÍNEA -->
+            <!-- BOTÓN AÑADIR NUEVA LÍNEA -->
             <button type="submit"
                     id="btnAgregarLinea"
                     formaction="/compras/agregar-detalle"
@@ -134,7 +140,7 @@
 
             <hr>
 
-            <!-- RESUMEN -->
+            <!-- RESUMEN DINÁMICO -->
             <div class="card p-3 mb-4" id="resumenCompra" style="display:none;">
                 <h4 class="mb-3">Resumen de la compra</h4>
 
@@ -154,6 +160,7 @@
                     ⬅ Volver al inicio
                 </a>
 
+                <!-- Botón deshabilitado hasta que haya líneas válidas -->
                 <button type="submit" id="btnFinalizar" class="btn btn-success btn-lg px-5" disabled
                         style="opacity:0.5; cursor:not-allowed;">
                     Finalizar Compra
@@ -172,6 +179,7 @@
 
     /* ============================================================
        ACTUALIZAR LÍNEA
+       - Actualiza precio, total, avisos y límites según el tipo seleccionado
     ============================================================ */
     function actualizarLinea(index) {
         const select = document.getElementById("tipoEntrada_" + index);
@@ -182,6 +190,7 @@
         const precioUnitarioHidden = document.getElementById("precioUnitarioHidden_" + index);
         const totalHidden = document.getElementById("totalHidden_" + index);
 
+        // Datos del tipo de entrada seleccionado
         const option = select.selectedOptions[0];
         const precio = parseFloat(option.dataset.precio);
         const stock = parseInt(option.dataset.stock);
@@ -196,17 +205,20 @@
 
         let cantidad = parseInt(cantidadInput.value) || 0;
 
-        // 🔒 EVITAR QUE EL USUARIO ESCRIBA MÁS DE LO PERMITIDO
+        // EVITAR QUE EL USUARIO ESCRIBA MÁS DE LO PERMITIDO
         if (cantidad > stock) {
             cantidad = stock;
             cantidadInput.value = stock;
         }
 
+        // Calcular total
         const total = precio * cantidad;
 
+        // Actualizar campos visibles
         precioUnitarioInput.value = precio.toFixed(2);
         totalInput.value = total.toFixed(2);
 
+        // Actualizar campos ocultos que se envían al backend
         precioUnitarioHidden.value = precio.toFixed(2);
         totalHidden.value = total.toFixed(2);
 
@@ -214,7 +226,7 @@
         const aviso = document.getElementById("avisoPocas_" + index);
         aviso.style.display = (stock > 0 && stock < 10) ? "block" : "none";
 
-        // 🔒 BLOQUEAR BOTÓN AGREGAR SI EL TIPO ESTÁ AGOTADO
+        // BLOQUEAR BOTÓN AGREGAR SI EL TIPO ESTÁ AGOTADO
         const btnAgregar = document.getElementById("btnAgregarLinea");
         if (stock === 0) {
             btnAgregar.disabled = true;
@@ -231,6 +243,7 @@
 
     /* ============================================================
        ACTUALIZAR RESUMEN
+       - Construye el resumen dinámico y controla el botón Finalizar
     ============================================================ */
     function actualizarResumen() {
         const resumen = document.getElementById("resumenCompra");
@@ -242,6 +255,7 @@
         let totalGeneral = 0;
         let hayLineasValidas = false;
 
+        // Recorre todas las líneas del formulario
         document.querySelectorAll("[id^='tipoEntrada_']").forEach((select, index) => {
             const option = select.selectedOptions[0];
             const nombre = option.textContent;
@@ -251,6 +265,7 @@
 
             const total = precio * cantidad;
 
+            // Solo mostrar líneas válidas
             if (stock > 0 && cantidad > 0) {
                 hayLineasValidas = true;
 
@@ -265,7 +280,10 @@
             totalGeneral += total;
         });
 
+        // Total general
         totalGeneralSpan.textContent = totalGeneral.toFixed(2) + " €";
+
+        // Mostrar u ocultar resumen
         resumen.style.display = hayLineasValidas ? "block" : "none";
 
         // Activar/desactivar botón Finalizar
@@ -284,6 +302,7 @@
 
     /* ============================================================
        COMPROBAR STOCK GLOBAL
+       - Si ningún tipo tiene stock, bloquea todo el formulario
     ============================================================ */
     function comprobarStockGlobal() {
         const selects = document.querySelectorAll("[id^='tipoEntrada_']");
@@ -293,6 +312,7 @@
 
         let hayStock = false;
 
+        // Buscar si existe al menos un tipo con stock
         selects.forEach(select => {
             Array.from(select.options).forEach(opt => {
                 const stock = parseInt(opt.dataset.stock);
@@ -302,6 +322,7 @@
             });
         });
 
+        // Si no queda stock → bloquear todo
         if (!hayStock) {
             btnAgregar.disabled = true;
             btnAgregar.style.opacity = "0.5";
@@ -323,6 +344,7 @@
 
     /* ============================================================
        INICIALIZACIÓN
+       - Al cargar la página, inicializa todas las líneas
     ============================================================ */
     window.onload = function() {
         document.querySelectorAll("[id^='tipoEntrada_']").forEach((select, index) => {
@@ -332,6 +354,3 @@
         comprobarStockGlobal();
     };
 </script>
-
-</body>
-</html>

@@ -13,7 +13,7 @@ public class TipoEntrada {
     private int id_evento;         
     private double precio;         
     private String nombre; 
-    private int stock;
+    private int stock; // Cantidad de entradas disponibles
 
     // Constructor vacío
     public TipoEntrada() {

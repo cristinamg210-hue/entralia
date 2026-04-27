@@ -18,6 +18,9 @@ import java.util.List;
 
 @Service
 public class DetalleCompraService {
+
+    //DAO que accede a la BD
+    
     private final DetalleCompraDAO detalleCompraDAO;
 
     @Autowired

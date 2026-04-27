@@ -9,18 +9,19 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@Controller
+@Controller // Controlador encargado del login y logout
 public class LoginController {
 
     @Autowired
-    private UsuarioService usuarioService;
+    private UsuarioService usuarioService; // Servicio para buscar y guardar usuarios
 
-    @GetMapping("/login")
+    @GetMapping("/login") // Muestra la página de login
     public String mostrarLogin() {
         return "login";
     }
 
-    @PostMapping("/login")
+    @PostMapping("/login") // Procesa el formulario de login
+    
     public String procesarLogin(@RequestParam String email, HttpSession session) {
 
         // Buscar usuario por email
@@ -33,28 +34,29 @@ public class LoginController {
             usuario.setNombre(email);
             usuario.setEmail(email);
 
-            // IMPORTANTE: nuevo usuario = USER
-            usuario.setRol("USER");
+            
+            usuario.setRol("USER"); // Los nuevos usuarios siempre son USER
 
-            usuarioService.guardarUsuario(usuario);
+            usuarioService.guardarUsuario(usuario); // Guardamos en la BD
 
-            // Recuperarlo desde la BD
+            // Lo recuperamos ya con su ID generado
+
             usuario = usuarioService.buscarPorEmail(email);
         }
 
-        // Guardar usuario completo en sesión
+        // Guardamos el usuario en sesión
         session.setAttribute("usuarioLogueado", usuario);
 
-        // Guardar rol en sesión (para Thymeleaf y controladores)
+        // Guardamos también el rol (para controlar permisos)
         session.setAttribute("usuarioRol", usuario.getRol());
 
-        return "redirect:/";
+        return "redirect:/"; // Redirige a la página principal
     }
 
-    @GetMapping("/logout")
+    @GetMapping("/logout") // Cierra sesión
     public String logout(HttpSession session) {
-        session.invalidate();
-        return "redirect:/login";
+        session.invalidate(); // Borra todos los datos de sesión
+        return "redirect:/login"; // Vuelve al login
     }
 }
 

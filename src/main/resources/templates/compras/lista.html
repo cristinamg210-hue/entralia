@@ -3,18 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <title>Compras</title>
-    <!-- Bootstrap -->
+
+    <!-- Bootstrap para estilos -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 
-    <!-- CSS -->
+    <!-- Tu CSS personalizado -->
     <link rel="stylesheet" th:href="@{/css/styles.css}">
 </head>
+
 <body class="container mt-4">
 
 <h2>Compras</h2>
 
+<!-- Botón para crear una nueva compra -->
 <a href="/compras/nuevo" class="btn btn-primary mb-3">Nueva Compra</a>
 
+<!-- Tabla de compras -->
 <table class="table table-striped">
     <thead>
         <tr>
@@ -23,14 +27,26 @@
             <th>Acciones</th>
         </tr>
     </thead>
+
     <tbody>
+        <!-- Recorremos la lista de compras -->
         <tr th:each="c : ${compras}">
+
+            <!-- ID de la compra -->
             <td th:text="${c.idCompra}"></td>
+
+            <!-- ID del usuario que realizó la compra -->
             <td th:text="${c.idUsuario}"></td>
+
+            <!-- Acciones disponibles -->
             <td>
-                <a th:href="@{'/compras/editar/' + ${c.idCompra}}" class="btn btn-warning btn-sm">Editar</a>
-                <a th:href="@{'/compras/eliminar/' + ${c.idCompra}}" class="btn btn-danger btn-sm">Eliminar</a>
+                <!-- Editar compra -->
+                <a th:href="@{'/compras/editar/' + ${c.idCompra}}"class="btn btn-warning btn-sm">Editar</a>
+
+                <!-- Eliminar compra -->
+                <a th:href="@{'/compras/eliminar/' + ${c.idCompra}}"class="btn btn-danger btn-sm">Eliminar</a>
             </td>
+
         </tr>
     </tbody>
 </table>

@@ -5,9 +5,9 @@ public class Asiento {
     private int id_asiento;
     private int id_evento;
     private String numero;
-    private boolean ocupado;
+    private boolean ocupado; // Indica si el asiento está ocupado o libre
 
-    public Asiento() {}
+    public Asiento() {} // Constructor vacío obligatorio para Spring
 
     public int getId_asiento() {
         return id_asiento;

@@ -14,6 +14,6 @@ public interface CompraDAO {
     void actualizar(Compra compra);    
     void eliminar(int id);                 
     Compra obtenerPorId(int id);           
-    List<Compra> listarTodos();        
+    List<Compra> listarTodos(); // Lista todas las compras de la BD
     List<Compra> listarComprasPorUsuario(int idUsuario);     
 }

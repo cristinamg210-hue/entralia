@@ -17,17 +17,23 @@ public class TipoEntradaDAOJdbc implements TipoEntradaDAO {
 
     @Override
     public void guardar(TipoEntrada tipo) {
+
+        // SQL para insertar un nuevo tipo de entrada
+
         String sql = "INSERT INTO tipo_entrada (id_evento, precio, nombre, stock) VALUES (?, ?, ?, ?)";
         conexion.getJdbcTemplate().update(sql,
                 tipo.getId_evento(),
                 tipo.getPrecio(),
                 tipo.getNombre(),
-                tipo.getStock() 
+                tipo.getStock()  // stock inicial
         );
     }
 
     @Override
     public void actualizar(TipoEntrada tipo) {
+
+        // SQL para actualizar un tipo de entrada existente
+
         String sql = "UPDATE tipo_entrada SET id_evento = ?, precio = ?, nombre = ?, stock = ? WHERE id_tipo_entrada = ?";
         conexion.getJdbcTemplate().update(sql,
                 tipo.getId_evento(),
@@ -46,6 +52,9 @@ public class TipoEntradaDAOJdbc implements TipoEntradaDAO {
 
     @Override
     public TipoEntrada obtenerPorId(int id) {
+
+        // SQL para obtener un tipo de entrada por su ID
+
         String sql = "SELECT * FROM tipo_entrada WHERE id_tipo_entrada = ?";
         return conexion.getJdbcTemplate().queryForObject(sql, (rs, rowNum) ->
                 new TipoEntrada(
@@ -59,6 +68,9 @@ public class TipoEntradaDAOJdbc implements TipoEntradaDAO {
 
     @Override
     public List<TipoEntrada> listarTodos() {
+
+        // SQL para listar todos los tipos de entrada
+
         String sql = "SELECT * FROM tipo_entrada";
         return conexion.getJdbcTemplate().query(sql, (rs, rowNum) ->
                 new TipoEntrada(
@@ -73,6 +85,9 @@ public class TipoEntradaDAOJdbc implements TipoEntradaDAO {
     // actualizar stock
     @Override
     public void actualizarStock(int idTipoEntrada, int nuevoStock) {
+
+        // SQL para actualizar el stock disponible
+
         String sql = "UPDATE tipo_entrada SET stock = ? WHERE id_tipo_entrada = ?";
         conexion.getJdbcTemplate().update(sql, nuevoStock, idTipoEntrada);
     }
@@ -80,6 +95,9 @@ public class TipoEntradaDAOJdbc implements TipoEntradaDAO {
     // listar tipos por evento
     @Override
     public List<TipoEntrada> listarPorEvento(int idEvento) {
+
+        // SQL para listar los tipos de entrada de un evento concreto
+        
         String sql = "SELECT * FROM tipo_entrada WHERE id_evento = ?";
         return conexion.getJdbcTemplate().query(sql, (rs, rowNum) ->
                 new TipoEntrada(

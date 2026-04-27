@@ -15,6 +15,8 @@ import java.util.List;
 @Service
 public class EventoService {
 
+    // DAO que accede a la base de datos
+    
     private final EventoDAO eventoDAO;
 
     @Autowired

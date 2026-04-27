@@ -11,50 +11,54 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-@Controller
-@RequestMapping("/tipos-entrada")
+@Controller // Controlador que gestiona los tipos de entrada
+@RequestMapping("/tipos-entrada") // Todas las rutas empiezan por /tipos-entrada
 public class TipoEntradaController {
 
     @Autowired
-    private TipoEntradaService tipoEntradaService;
+    private TipoEntradaService tipoEntradaService; // Servicio con la lógica de negocio
 
     // LISTAR
-    @GetMapping
+    @GetMapping // Muestra la lista de tipos de entrada
+
     public String listarTiposEntrada(Model model) {
         model.addAttribute("tiposEntrada", tipoEntradaService.listarTipoEntradas());
-        return "tipos-entrada/lista";
+        return "tipos-entrada/lista"; // Vista lista.html
     }
 
     // FORMULARIO NUEVO
-    @GetMapping("/nuevo")
+    @GetMapping("/nuevo") // Muestra el formulario para crear un tipo de entrada
+
     public String mostrarFormularioNuevo(Model model) {
         model.addAttribute("tipoEntrada", new TipoEntrada());
         return "tipos-entrada/formulario";
     }
 
     // GUARDAR
-    @PostMapping("/guardar")
+    @PostMapping("/guardar") // Guarda un nuevo tipo de entrada
     public String guardarTipoEntrada(@ModelAttribute TipoEntrada tipoEntrada) {
         tipoEntradaService.guardarTipoEntrada(tipoEntrada);
-        return "redirect:/tipos-entrada";
+        return "redirect:/tipos-entrada"; // Redirige a la lista
     }
 
     // FORMULARIO EDITAR
-    @GetMapping("/editar/{id}")
+    @GetMapping("/editar/{id}") // Muestra el formulario para editar un tipo existente
+
     public String mostrarFormularioEditar(@PathVariable int id, Model model) {
         model.addAttribute("tipoEntrada", tipoEntradaService.obtenerTipoEntradaPorId(id));
         return "tipos-entrada/formulario";
     }
 
     // ACTUALIZAR
-    @PostMapping("/actualizar")
+    @PostMapping("/actualizar") // Actualiza un tipo de entrada ya existente
+
     public String actualizarTipoEntrada(@ModelAttribute TipoEntrada tipoEntrada) {
         tipoEntradaService.actualizarTipoEntrada(tipoEntrada);
         return "redirect:/tipos-entrada";
     }
 
-    // ELIMINAR
-    @GetMapping("/eliminar/{id}")
+    // ELIMINAR 
+    @GetMapping("/eliminar/{id}") // Elimina un tipo de entrada por ID
     public String eliminarTipoEntrada(@PathVariable int id) {
         tipoEntradaService.eliminarTipoEntrada(id);
         return "redirect:/tipos-entrada";

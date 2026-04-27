@@ -17,6 +17,8 @@
     <p>Gracias por tu compra. Aquí tienes el resumen.</p>
 </div>
 
+<!-- Tarjeta principal -->
+
 <div class="card shadow-sm">
 
     <div class="card-header bg-primary text-white">
@@ -26,6 +28,8 @@
     <div class="card-body">
 
         <h5 class="mb-3">Detalles</h5>
+
+        <!-- Tabla de detalles -->
 
         <table class="table table-bordered align-middle">
             <thead class="table-light">
@@ -41,15 +45,22 @@
             </thead>
 
             <tbody>
+
+                <!-- Recorremos cada detalle -->
+
             <tr th:each="d : ${compra.detalles}">
+
+                <!-- Imagen del evento -->
                 <td>
                     <img th:src="@{'/img/eventos/' + ${d.id_evento} + '.jpg'}"
                          width="120" class="img-thumbnail">
                 </td>
 
+                <!-- Nombre del evento (en tu BD solo tienes el ID, por eso lo muestras así) -->
+
                 <td th:text="'Evento ' + ${d.id_evento}"></td>
 
-                <!-- protegemos por si tipoEntrada viene null -->
+                <!-- Tipo de entrada (protegido por si viene null) -->
                 <td th:text="${d.tipoEntrada != null ? d.tipoEntrada.nombre : 'Tipo no disponible'}"></td>
 
                 <td th:text="${d.cantidad}"></td>
@@ -71,6 +82,8 @@
     </div>
 </div>
 
+<!-- Botones de navegación -->
+ 
 <div class="mt-4 text-center">
     <a href="/eventos" class="btn btn-secondary">Volver a eventos</a>
     <a href="/compras/mis-compras" class="btn btn-primary">Ver mis compras</a>

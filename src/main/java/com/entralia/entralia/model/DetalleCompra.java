@@ -6,15 +6,15 @@ public class DetalleCompra {
     private int id_compra;
     private int id_evento;
     private int id_tipo_entrada;
-    private int cantidad;
-    private double precio_unitario;
+    private int cantidad; // Cantidad de entradas compradas en este detalle
+    private double precio_unitario; // Precio de una sola entrada
     private String asiento;
 
-    // Referencias para las vistas
+    // Objetos completos para mostrar datos en las vistas
     private Evento evento;
     private TipoEntrada tipoEntrada;
 
-    public DetalleCompra() {}
+    public DetalleCompra() {} // Constructor vacío para Spring
 
     public DetalleCompra(int id_detalle, int id_compra, int id_evento,
                          int id_tipo_entrada, int cantidad, double precio_unitario) {

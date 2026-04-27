@@ -11,17 +11,25 @@
 </head>
 <body class="container mt-4">
 
+<!-- Título dinámico: nuevo o edición -->
+
 <h2 th:text="${detalle.idDetalle == null} ? 'Nuevo Detalle de Compra' : 'Editar Detalle de Compra'"></h2>
 
+<!-- Formulario principal -->
 <form th:action="@{${detalle.idDetalle == null} ? '/detalles-compra/guardar' : '/detalles-compra/actualizar'}"
       th:object="${detalle}" method="post">
 
+      <!-- ID oculto del detalle -->
     <input type="hidden" th:field="*{idDetalle}"/>
+
+    <!-- Selección de compra -->
 
     <div class="mb-3">
         <label class="form-label">ID Compra</label>
         <select th:field="*{idCompra}" class="form-select" required>
             <option value="">Seleccione una compra</option>
+
+            <!-- Lista de compras disponibles -->
             <option th:each="c : ${compras}"
                     th:value="${c.idCompra}"
                     th:text="'Compra #' + ${c.idCompra}">
@@ -29,10 +37,15 @@
         </select>
     </div>
 
+    <!-- Selección del tipo de entrada -->
+
     <div class="mb-3">
         <label class="form-label">ID Tipo Entrada</label>
         <select th:field="*{idTipoEntrada}" class="form-select" required>
             <option value="">Seleccione un tipo</option>
+
+            <!-- Lista de tipos de entrada -->
+
             <option th:each="t : ${tiposentrada}"
                     th:value="${t.idTipoEntrada}"
                     th:text="${t.nombre}">
@@ -40,10 +53,14 @@
         </select>
     </div>
 
+    <!-- Cantidad -->
+
     <div class="mb-3">
         <label class="form-label">Cantidad</label>
         <input type="number" th:field="*{cantidad}" class="form-control" min="1" required>
     </div>
+
+    <!-- Botones -->
 
     <button type="submit" class="btn btn-success">Guardar</button>
     <a href="/detalles-compra" class="btn btn-secondary">Cancelar</a>

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 public class Conexion {
     private final JdbcTemplate jdbcTemplate;   // acceso a BD
 
+    // Spring inyecta automáticamente el JdbcTemplate configurado
     public Conexion(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }

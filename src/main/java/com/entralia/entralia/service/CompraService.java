@@ -36,7 +36,7 @@ public class CompraService {
     @Qualifier("asientoDAOJdbc")
     private AsientoDAO asientoDAO;
 
-    // ⭐ PROCESAR COMPRA COMPLETA
+    // PROCESAR COMPRA COMPLETA
     public void procesarCompra(Compra compra) {
 
         // 1. Guardar compra y obtener ID generado
@@ -44,16 +44,20 @@ public class CompraService {
 
         double totalCompra = 0.0;
 
-        // ⭐ Lista final de detalles (ya divididos si hay asientos)
+        // Lista final de detalles (ya divididos si hay asientos)
         List<DetalleCompra> detallesFinales = new ArrayList<>();
 
         // 2. Procesar cada detalle recibido del formulario
         for (DetalleCompra d : compra.getDetalles()) {
 
+            // Cargar tipo de entrada
+
             var tipo = tipoEntradaDAO.obtenerPorId(d.getId_tipo_entrada());
             if (tipo == null) {
                 throw new RuntimeException("Tipo de entrada no encontrado");
             }
+
+            // Cargar evento asociado
 
             Evento evento = eventoDAO.obtenerPorId(tipo.getId_evento());
 
@@ -62,7 +66,7 @@ public class CompraService {
                 throw new RuntimeException("No hay stock suficiente para " + tipo.getNombre());
             }
 
-            // ⭐ EVENTO SIN ASIENTOS → procesar normal
+            // EVENTO SIN ASIENTOS → procesar normal
             if (!evento.isUsa_asientos()) {
 
                 d.setId_compra(idCompra);
@@ -75,13 +79,17 @@ public class CompraService {
                 continue;
             }
 
-            // ⭐ EVENTO CON ASIENTOS → dividir en entradas individuales
+            // EVENTO CON ASIENTOS → dividir en entradas individuales
             for (int i = 0; i < d.getCantidad(); i++) {
+
+                // Buscar asiento libre
 
                 Asiento asientoLibre = asientoDAO.obtenerAsientoLibre(evento.getId_evento());
                 if (asientoLibre == null) {
                     throw new RuntimeException("No quedan asientos disponibles.");
                 }
+
+                // Crear un detalle por cada asiento
 
                 DetalleCompra nuevo = new DetalleCompra();
                 nuevo.setId_compra(idCompra);
@@ -92,6 +100,8 @@ public class CompraService {
                 nuevo.setTipoEntrada(tipo);
                 nuevo.setAsiento(asientoLibre.getNumero());
 
+                // Marcar asiento como ocupado
+                
                 asientoDAO.marcarOcupado(asientoLibre.getId_asiento());
 
                 totalCompra += nuevo.getPrecioTotal();
@@ -113,7 +123,7 @@ public class CompraService {
         compraDAO.actualizar(compra);
     }
 
-    // ⭐ MÉTODOS DE CONSULTA
+    // MÉTODOS DE CONSULTA
     public List<Compra> listarComprasPorUsuario(int idUsuario) {
         return compraDAO.listarComprasPorUsuario(idUsuario);
     }
