@@ -4,19 +4,30 @@
 
 <body>
 
+    <!-- Fragmento de header reutilizable en todas las páginas -->
+
 <header th:fragment="header" 
         class="shadow-sm mb-4"
         style="background: linear-gradient(135deg, #C8A2FF, #868181);">
 
+         <!-- Contenedor principal del header -->
+
     <div class="container d-flex justify-content-between align-items-center py-3">
+
+        <!-- Logo / nombre de la web que lleva a la página principal -->
 
         <a href="/" class="fw-bold fs-3" 
            style="text-decoration:none; color:white;">
             Entralia
         </a>
 
+        <!-- Navegación del usuario -->
         <nav>
+
+            <!-- Botón para ir a la lista de eventos -->
             <a href="/eventos" class="btn btn-light me-2">Eventos</a>
+
+            <!-- Botón para ir al perfil del usuario -->
             <a href="/usuarios/perfil" class="btn btn-outline-light">Mi perfil</a>
         </nav>
 
